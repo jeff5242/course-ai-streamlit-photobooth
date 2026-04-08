@@ -1,7 +1,22 @@
 import streamlit as st
 import time
 import io
+import os
+from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
+
+
+def save_uploaded_file(uploaded_file, hw_name, student_name=""):
+    """將上傳的作業檔案存入 uploads/homework/ 資料夾"""
+    save_dir = os.path.join(os.path.dirname(__file__), "uploads", "homework", hw_name)
+    os.makedirs(save_dir, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    prefix = f"{student_name}_" if student_name else ""
+    filename = f"{prefix}{timestamp}_{uploaded_file.name}"
+    filepath = os.path.join(save_dir, filename)
+    with open(filepath, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+    return filepath
 
 # 設定頁面配置
 st.set_page_config(layout="wide", page_title="AI 領航員：Vibe Coding 實戰教學")
@@ -23,6 +38,12 @@ course = st.sidebar.selectbox("選擇課程", [
     "第四堂：截圖復刻與在地化",
     "第五堂：支付串接與部署策略",
     "第六堂：硬體整合與總結",
+    "第七堂：部署與 MVP 驗收",
+    "第八堂：GitHub 版本控制與協作",
+    "第九堂：測試迭代與品質優化",
+    "第十堂：會員系統與社群經營",
+    "第十一堂：維護自動化與周邊商品",
+    "第十二堂：成果發表與未來路線圖",
 ])
 
 if course == "第一堂：Vibe Coding 入門":
@@ -39,6 +60,7 @@ elif course == "第二堂：實戰體驗與案例":
         "R1. 上堂回顧與 Q&A",
         "5. 拍貼機實戰 Demo",
         "6. Vibe Coding 實戰案例",
+        "6.5. 代碼考古學",
         "HW2. 課後練習",
     ])
 elif course == "第三堂：需求分析與架構規劃":
@@ -62,19 +84,65 @@ elif course == "第五堂：支付串接與部署策略":
         "R4. 上堂回顧與 Q&A",
         "13. QR Code 行動支付實作",
         "14. 支付與列印串接規劃",
+        "14.5. 異常處理 Vibe 化",
         "15. 快閃店部署策略",
         "16. 數據儀表板願景",
         "HW5. 課後練習",
     ])
-else:
+elif course == "第六堂：硬體整合與總結":
     current_section = st.sidebar.radio("課程章節", [
         "R5. 上堂回顧與 Q&A",
         "17. 硬體 SDK 規格收集",
+        "17.5. AI 加值應用實驗",
         "18. 通訊協定解析",
         "19. 整合架構設計",
         "20. 整合實作與測試",
         "21. 課程總結與後續規劃",
         "HW6. 課後練習",
+    ])
+elif course == "第七堂：部署與 MVP 驗收":
+    current_section = st.sidebar.radio("課程章節", [
+        "R6. 上堂回顧與 Q&A",
+        "22. MVP 版本定義與範圍",
+        "23. 部署工作流程",
+        "24. 現場部署實作",
+        "HW7. 課後練習",
+    ])
+elif course == "第八堂：GitHub 版本控制與協作":
+    current_section = st.sidebar.radio("課程章節", [
+        "R7. 上堂回顧與 Q&A",
+        "25. Git 版本控制入門",
+        "26. GitHub 協作流程",
+        "27. 用 AI 管理程式碼變更",
+        "HW8. 課後練習",
+    ])
+elif course == "第九堂：測試迭代與品質優化":
+    current_section = st.sidebar.radio("課程章節", [
+        "R8. 上堂回顧與 Q&A",
+        "28. 系統測試策略",
+        "29. 迭代修正工作坊",
+        "HW9. 課後練習",
+    ])
+elif course == "第十堂：會員系統與社群經營":
+    current_section = st.sidebar.radio("課程章節", [
+        "R9. 上堂回顧與 Q&A",
+        "30. 會員關係建立與維護",
+        "31. 官方帳號與社群經營",
+        "HW10. 課後練習",
+    ])
+elif course == "第十一堂：維護自動化與周邊商品":
+    current_section = st.sidebar.radio("課程章節", [
+        "R10. 上堂回顧與 Q&A",
+        "32. 維護流程自動化",
+        "33. 周邊商品功能規劃",
+        "HW11. 課後練習",
+    ])
+else:
+    current_section = st.sidebar.radio("課程章節", [
+        "R11. 上堂回顧與 Q&A",
+        "34. 成果發表準備",
+        "35. 未來路線圖",
+        "HW12. 課後練習",
     ])
 
 # =====================================================
@@ -95,15 +163,7 @@ if current_section == "0. 啟航：計畫願景":
         > **由 JD 親自參與開發流程，作為內部示範，消除團隊對新技術的畏懼感。**
         """)
     with col2:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    border-radius: 15px; padding: 40px 20px; text-align: center; color: white;">
-            <p style="font-size: 48px; margin: 0;">🔄</p>
-            <h3 style="margin: 10px 0; color: white;">數位轉型</h3>
-            <p style="font-size: 14px; opacity: 0.9;">被動使用 ➜ AI 驅動 ➜ 自主掌控</p>
-        </div>
-        """, unsafe_allow_html=True)
-        st.caption("系統轉型示意圖")
+        st.image("images/transfer.png", caption="系統轉型示意圖", use_container_width=True)
 
     st.divider()
     st.subheader("🎯 轉型願景")
@@ -117,7 +177,9 @@ if current_section == "0. 啟航：計畫願景":
 elif current_section == "1. 認識 Vibe Coding":
     st.title("🧩 什麼是 Vibe Coding？")
 
-    tab1, tab2, tab3 = st.tabs(["💡 核心概念", "⚔️ 能與不能", "🎯 Prompt 實戰練習"])
+    tab1, tab_history, tab_trust, tab2, tab3 = st.tabs([
+        "💡 核心概念", "📜 程式開發演進史", "🤝 與 AI 建立信任", "⚔️ 能與不能", "🎯 Prompt 實戰練習"
+    ])
 
     with tab1:
         st.markdown("""
@@ -163,6 +225,111 @@ elif current_section == "1. 認識 Vibe Coding":
         st.markdown("")
         st.markdown("#### 核心公式：")
         st.markdown("### **明確背景 + 具體目標 + 期望風格 = 完美產出**")
+
+    with tab_history:
+        st.markdown("### 從打孔卡到自然語言：程式開發的演進歷程")
+        st.markdown("在理解 Vibe Coding 之前，先看看人類「跟電腦溝通」的方式是如何演變的：")
+
+        timeline = [
+            ("1950s", "機器語言", "0 和 1", "直接寫二進位指令，一個錯就整台當機", "#e74c3c"),
+            ("1960s", "組合語言", "MOV AX, 01", "用助記符代替二進位，但仍需理解硬體架構", "#e67e22"),
+            ("1970-80s", "高階語言", "C / Pascal", "接近英文的語法，一行程式可以做很多事", "#f1c40f"),
+            ("1990-2000s", "物件導向 + 框架", "Java / Python", "用「物件」組織程式碼，框架幫你處理重複的事", "#2ecc71"),
+            ("2010s", "低代碼 / 無代碼", "Drag & Drop", "拖拉元件就能做 App，但客製化受限", "#3498db"),
+            ("2024-Now", "Vibe Coding", "自然語言", "用日常用語描述需求，AI 幫你寫完整程式", "#9b59b6"),
+        ]
+
+        for i, (year, era, example, desc, color) in enumerate(timeline):
+            col_year, col_content = st.columns([2, 8])
+            with col_year:
+                st.markdown(f"""
+                <div style="background: {color}; border-radius: 8px; padding: 10px; text-align: center; color: white;">
+                    <strong>{year}</strong>
+                </div>
+                """, unsafe_allow_html=True)
+            with col_content:
+                st.markdown(f"**{era}**　`{example}`　— {desc}")
+
+            if i < len(timeline) - 1:
+                st.markdown("<div style='margin-left: 60px; color: #636e72; font-size: 16px;'>↓</div>", unsafe_allow_html=True)
+
+        st.markdown("")
+        st.success("""
+        💡 **關鍵趨勢：** 每一次演進，人類離「用自己的語言跟電腦溝通」就更近一步。
+        Vibe Coding 不是突然出現的，而是這條路走了 70 年的自然結果。
+
+        **你不需要學程式語言，因為你的母語就是最好的程式語言。**
+        """)
+
+    with tab_trust:
+        st.markdown("### 與 AI Agent 建立信任：從懷疑到放手")
+        st.markdown("第一次使用 AI Agent，大多數人的反應是：「真的可以信任它嗎？」這很正常。")
+
+        st.divider()
+        st.markdown("#### 🚗 類比：Tesla 自動駕駛的信任過程")
+        st.markdown("你與 AI Agent 建立信任的過程，跟開 Tesla 放手讓自動駕駛接管非常相似：")
+
+        trust_stages = [
+            ("😰 階段一：完全不信任", "雙手緊握方向盤", "一問一答，每個結果都仔細檢查",
+             "剛開始用 AI，每行程式都要逐字看過", "#e74c3c"),
+            ("🤔 階段二：有條件信任", "偶爾放手，但隨時準備接管", "開始交付小任務，看結果再決定下一步",
+             "讓 AI 寫一個小功能，確認品質後再交更多", "#f39c12"),
+            ("😊 階段三：逐漸放手", "大部分時間放手，只在複雜路段接管", "交付整個模組，只在關鍵決策點介入",
+             "讓 AI 規劃整個功能，你負責審核方向", "#27ae60"),
+            ("😎 階段四：充分信任", "全程放手，專注在目的地", "描述目標，讓 AI 自主規劃並執行",
+             "像今天的案例——一段話就完成 8 個階段的開發", "#2980b9"),
+        ]
+
+        for stage, tesla, ai, example, color in trust_stages:
+            st.markdown(f"""
+            <div style="border-left: 4px solid {color}; padding: 15px 20px; margin-bottom: 12px;
+                        background: rgba(45,52,54,0.3); border-radius: 0 8px 8px 0;">
+                <strong style="color: {color}; font-size: 16px;">{stage}</strong><br>
+                <table style="width: 100%; margin-top: 8px;">
+                    <tr>
+                        <td style="width: 50%; padding: 5px; color: #b2bec3; font-size: 13px;">
+                            🚗 Tesla：{tesla}
+                        </td>
+                        <td style="width: 50%; padding: 5px; color: #dfe6e9; font-size: 13px;">
+                            🤖 AI Agent：{ai}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="padding: 5px; color: #74b9ff; font-size: 13px;">
+                            📌 {example}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.divider()
+        st.markdown("#### 📈 信任帶來指數型成長")
+
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #0984e3 0%, #6c5ce7 100%);
+                    border-radius: 15px; padding: 25px; color: white;">
+            <h4 style="color: white; text-align: center;">效益成長曲線</h4>
+            <hr style="border-color: rgba(255,255,255,0.3);">
+            <table style="width: 100%; color: white; text-align: center;">
+                <tr style="font-size: 14px;">
+                    <td style="padding: 12px;">😰 一問一答<br><strong style="font-size: 20px;">1x</strong><br>基礎效率</td>
+                    <td style="padding: 12px;">🤔 小任務委派<br><strong style="font-size: 20px;">3x</strong><br>節省重複工作</td>
+                    <td style="padding: 12px;">😊 模組級委派<br><strong style="font-size: 20px;">10x</strong><br>大幅加速開發</td>
+                    <td style="padding: 12px;">😎 自主執行<br><strong style="font-size: 20px;">50x+</strong><br>指數型成長</td>
+                </tr>
+            </table>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("")
+        st.info("""
+        💡 **信任不是盲目的。** 建立信任的關鍵是：
+        1. **持續使用** — 瞭解 AI 的「脾氣」，就像認識一個新同事
+        2. **從小事開始** — 先交小任務，累積信心後再放大範圍
+        3. **保持監督** — 即使放手，關鍵決策仍由你做主
+        4. **給予回饋** — 告訴 AI 什麼做得好、什麼需要改，它會越來越懂你
+        """)
 
     with tab2:
         col_can, col_cannot = st.columns(2)
@@ -499,8 +666,18 @@ elif current_section == "HW1. 課後練習":
         """)
 
     st.divider()
-    st.subheader("📤 繳交方式")
-    st.info("請將 AI 產出的規格書文件（截圖或文字檔）帶來下堂課，我們會一起檢視並討論。")
+    st.subheader("📤 繳交作業")
+    student = st.text_input("你的名字", key="hw1_name", placeholder="例：JD")
+    hw1_file = st.file_uploader(
+        "上傳 AI 產出的規格書（截圖或文字檔）",
+        type=["png", "jpg", "jpeg", "pdf", "txt", "docx", "md"],
+        key="hw1_upload",
+    )
+    if hw1_file and student:
+        path = save_uploaded_file(hw1_file, "HW1", student)
+        st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+    elif hw1_file and not student:
+        st.warning("請先填寫你的名字再上傳。")
 
 # =====================================================
 # 第二堂課：實戰體驗與案例
@@ -1229,6 +1406,92 @@ elif current_section == "6. Vibe Coding 實戰案例":
         **這就是 Vibe Coding 的威力。**
         """)
 
+elif current_section == "6.5. 代碼考古學":
+    st.title("🏺 代碼考古學：讀懂現有系統")
+
+    st.markdown("""
+    要重構拍貼機系統，第一步不是「寫新的」，而是「**讀懂舊的**」。
+    這堂課我們學習如何用 AI 幫你「考古」——把看不懂的源碼變成你看得懂的架構圖。
+    """)
+
+    tab_why, tab_how, tab_mermaid = st.tabs(["🤔 為什麼要考古", "🔍 AI 輔助解讀", "📊 架構圖實作"])
+
+    with tab_why:
+        st.markdown("### 不讀舊碼就改版，最常踩到的坑")
+
+        pitfalls = [
+            ("🕳️ 隱藏依賴", "舊系統裡可能有你沒注意到的硬體呼叫順序，改了 A 結果 B 壞了。"),
+            ("🔤 編碼地雷", "簡體系統的字串編碼（GB2312）跟繁體（UTF-8）不同，直接改字會亂碼。"),
+            ("⏱️ 時序陷阱", "投幣機的訊號要在 200ms 內回應，否則硬體會判定逾時，這種邏輯藏在深處。"),
+            ("🔑 寫死的設定", "原廠可能把 API Key、IP 位址寫死在程式碼裡，不讀碼你根本找不到。"),
+        ]
+
+        for icon_title, desc in pitfalls:
+            st.markdown(f"**{icon_title}**：{desc}")
+
+        st.markdown("")
+        st.warning("⚠️ **經驗法則：** 花 1 小時讀懂舊碼，能省下 10 小時的除錯時間。")
+
+    with tab_how:
+        st.markdown("### 用 AI 解讀你看不懂的程式碼")
+        st.markdown("你不需要自己讀懂每一行，只需要會「問 AI」。以下是實用的提問範本：")
+
+        prompts = [
+            {
+                "scenario": "拿到整個專案，不知從何看起",
+                "prompt": "這是一個 PhotoBooth 拍貼機的系統源碼。請幫我分析專案結構，\n列出每個資料夾和主要檔案的用途，並標記哪些是核心業務邏輯。",
+            },
+            {
+                "scenario": "看到一段看不懂的函式",
+                "prompt": "請用繁體中文解釋這段程式碼在做什麼。\n請特別說明：1. 輸入和輸出 2. 有沒有跟硬體溝通 3. 可能的副作用",
+            },
+            {
+                "scenario": "想知道資料怎麼流動",
+                "prompt": "請追蹤從「使用者投幣」到「照片列印完成」的完整資料流。\n列出每一步經過哪個函式、哪個模組，用 Mermaid 流程圖表示。",
+            },
+        ]
+
+        for p in prompts:
+            with st.expander(f"情境：{p['scenario']}"):
+                st.code(p["prompt"], language=None)
+
+        st.info("💡 **訣竅：** 不要一次丟整個專案給 AI。先讓它看目錄結構，再針對重要檔案逐一深入。")
+
+    with tab_mermaid:
+        st.markdown("### 讓 AI 幫你畫架構圖（Mermaid）")
+        st.markdown("Mermaid 是一種用文字描述圖表的語法，AI 特別擅長產出這種格式。")
+
+        st.markdown("**範例：PhotoBooth 系統流程圖**")
+        st.code("""graph TD
+    A[使用者進入] --> B{投幣/掃碼}
+    B -->|投幣| C[投幣機偵測金額]
+    B -->|掃碼| D[QR Code 支付驗證]
+    C --> E[金額足夠？]
+    D --> E
+    E -->|是| F[進入拍照模式]
+    E -->|否| G[顯示餘額不足]
+    F --> H[倒數計時拍照]
+    H --> I[選擇背景/濾鏡]
+    I --> J[合成照片]
+    J --> K[送至印表機]
+    K --> L[列印完成]
+    L --> M[回到待機畫面]""", language="mermaid")
+
+        st.markdown("**你可以這樣請 AI 幫你畫：**")
+        st.code("""請根據我們剛才分析的程式碼，用 Mermaid 語法畫出：
+1. 系統整體架構圖（哪些模組、如何連接）
+2. 使用者操作流程圖（從進門到拿到照片）
+3. 硬體通訊時序圖（投幣 → 拍照 → 列印的訊號順序）""", language=None)
+
+        st.divider()
+        st.markdown("#### 🎯 現場練習")
+        st.markdown("如果你手上有現有系統的任何程式碼片段或截圖，現在就可以試試看：")
+        code_input = st.text_area("貼上一段程式碼或描述系統的某個流程",
+                                  key="archaeology_input", height=150,
+                                  placeholder="例如：貼上投幣機的控制程式碼，或描述「客人拍完照之後發生了什麼事」")
+        if code_input:
+            st.info("👆 把這段內容複製到 Claude，請它用 Mermaid 畫出流程圖！")
+
 elif current_section == "HW2. 課後練習":
     st.title("📝 課後練習：用 AI 完成一個小功能")
 
@@ -1257,8 +1520,18 @@ elif current_section == "HW2. 課後練習":
     3. **觀察 AI 的拆解方式** — 看它如何把你的需求拆成步驟
     """)
 
-    st.subheader("📤 繳交方式")
-    st.markdown("請將對話截圖或 AI 產出的程式碼帶來下堂課分享。")
+    st.subheader("📤 繳交作業")
+    student2 = st.text_input("你的名字", key="hw2_name", placeholder="例：JD")
+    hw2_file = st.file_uploader(
+        "上傳對話截圖或 AI 產出的程式碼",
+        type=["png", "jpg", "jpeg", "pdf", "txt", "py", "md"],
+        key="hw2_upload",
+    )
+    if hw2_file and student2:
+        path = save_uploaded_file(hw2_file, "HW2", student2)
+        st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+    elif hw2_file and not student2:
+        st.warning("請先填寫你的名字再上傳。")
 
 # =====================================================
 # 第三堂課：需求分析與架構規劃
@@ -1446,6 +1719,145 @@ elif current_section == "13. QR Code 行動支付實作":
         if st.button("🔄 重新模擬"):
             st.session_state.pay_stage = "idle"
             st.rerun()
+
+elif current_section == "14.5. 異常處理 Vibe 化":
+    st.title("🛡️ 異常處理 Vibe 化：讓錯誤訊息說人話")
+
+    st.markdown("""
+    系統出錯時，使用者看到的是什麼？如果是 `Error Code: 0x8004005`，沒有人知道該怎麼辦。
+    **異常處理 Vibe 化**就是用自然語言描述需求，讓 AI 幫你把冷冰冰的錯誤訊息變成**親切的繁體中文引導**。
+    """)
+
+    tab_before_after, tab_scenarios, tab_practice = st.tabs([
+        "🔄 Before vs After", "📋 常見異常情境", "🎯 實作練習"
+    ])
+
+    with tab_before_after:
+        st.markdown("### 同一個錯誤，兩種體驗")
+
+        error_pairs = [
+            {
+                "situation": "印表機卡紙",
+                "before": "ERROR: Printer jam detected. Code: 0x0002",
+                "after": "🖨️ 印表機卡紙了！\n\n請依以下步驟處理：\n1. 打開印表機上蓋\n2. 輕輕將卡住的紙張往外拉出\n3. 關上蓋子，系統會自動重新列印\n\n如需協助，請呼叫現場工作人員。",
+            },
+            {
+                "situation": "網路斷線（支付失敗）",
+                "before": "ConnectionError: Failed to reach payment gateway. Timeout after 30s.",
+                "after": "📶 網路連線中斷\n\n目前無法完成行動支付。你可以：\n• 使用投幣方式付款（機台左側投幣口）\n• 稍等 30 秒後重新掃碼\n\n系統偵測到網路恢復後會自動提示你。",
+            },
+            {
+                "situation": "相機無回應",
+                "before": "cv2.error: Camera index 0 not available",
+                "after": "📷 相機正在準備中...\n\n請稍候 10 秒。如果畫面仍未出現，\n請呼叫工作人員協助重新啟動相機。\n\n（系統已自動通知技術人員）",
+            },
+        ]
+
+        for pair in error_pairs:
+            st.markdown(f"#### {pair['situation']}")
+            col_b, col_a = st.columns(2)
+            with col_b:
+                st.markdown(f"""
+                <div style="background: #2d3436; border: 2px solid #d63031; border-radius: 8px;
+                            padding: 15px; color: #ff7675; font-family: monospace; font-size: 13px;">
+                    ❌ <strong>Before（原始錯誤）</strong><br><br>{pair['before']}
+                </div>
+                """, unsafe_allow_html=True)
+            with col_a:
+                st.markdown(f"""
+                <div style="background: #2d3436; border: 2px solid #00b894; border-radius: 8px;
+                            padding: 15px; color: #55efc4; font-size: 13px;">
+                    ✅ <strong>After（Vibe 化）</strong><br><br>{pair['after'].replace(chr(10), '<br>')}
+                </div>
+                """, unsafe_allow_html=True)
+            st.markdown("")
+
+    with tab_scenarios:
+        st.markdown("### PhotoBooth 常見異常情境清單")
+        st.markdown("以下是實際營運中最常遇到的問題，每一個都需要有**使用者看得懂的引導訊息**。")
+
+        scenarios = {
+            "💰 收款相關": [
+                "投幣機無法辨識硬幣（髒污或異幣）",
+                "紙鈔機退鈔（鈔票皺摺或破損）",
+                "QR Code 掃碼逾時（30 秒無回應）",
+                "行動支付扣款成功但系統未收到通知",
+            ],
+            "📷 拍照相關": [
+                "相機無法啟動（USB 連線中斷）",
+                "拍照倒數時使用者離開感應區",
+                "燈光模組故障（補光不足）",
+                "連續拍照間隔過短導致相機未就緒",
+            ],
+            "🖨️ 列印相關": [
+                "印表機離線（Wi-Fi 斷線）",
+                "紙張用完",
+                "墨水/色帶不足",
+                "列印品質異常（模糊、偏色）",
+            ],
+            "🖥️ 系統相關": [
+                "觸控螢幕無回應",
+                "系統記憶體不足（長時間運行後）",
+                "硬碟空間不足（照片累積）",
+                "意外斷電後的自動恢復",
+            ],
+        }
+
+        for category, items in scenarios.items():
+            with st.expander(category, expanded=False):
+                for item in items:
+                    st.markdown(f"- {item}")
+
+        st.info("""
+        💡 **Vibe Coding 做法：** 不用自己寫每一條錯誤訊息。把這份清單交給 AI，說：
+        「請針對以上每個異常情境，產出使用者友善的繁體中文提示訊息，語氣親切、步驟明確。」
+        """)
+
+    with tab_practice:
+        st.markdown("### 實作：讓 AI 幫你寫異常處理")
+        st.markdown("**建議 Prompt：**")
+        st.code("""【背景】
+我在開發 PhotoBooth 拍貼機系統（Streamlit + Python）。
+系統需要在各種硬體異常時顯示使用者友善的繁體中文提示。
+
+【目標】
+請幫我建立一個 error_messages.py 模組：
+1. 定義一個 ERROR_MESSAGES 字典，包含所有異常情境的提示訊息
+2. 每條訊息包含：圖示 emoji、標題、說明步驟、是否需通知技術人員
+3. 提供 show_error(error_code) 函式，在 Streamlit 中顯示友善提示
+4. 訊息語氣親切，像是服務人員在旁邊引導
+
+【風格】
+繁體中文、台灣用語、語氣溫和但明確""", language=None)
+
+        st.divider()
+        st.markdown("#### 🧪 即時預覽")
+        st.markdown("選擇一個情境，看看友善提示長什麼樣：")
+
+        demo_error = st.selectbox("選擇異常情境", [
+            "印表機卡紙", "網路斷線", "紙張用完", "相機無回應", "投幣無法辨識",
+        ])
+
+        demo_messages = {
+            "印表機卡紙": ("🖨️", "印表機卡紙了", "請打開印表機上蓋，輕輕將卡住的紙張往外拉出，再關上蓋子。系統會自動重新列印您的照片。"),
+            "網路斷線": ("📶", "網路連線暫時中斷", "行動支付暫時無法使用。您可以使用機台左側的投幣口付款，或稍等片刻讓系統自動重新連線。"),
+            "紙張用完": ("📄", "相紙已用完", "很抱歉造成不便！工作人員正在補充相紙，請稍候約 2 分鐘。您的照片已儲存，補紙後會自動列印。"),
+            "相機無回應": ("📷", "相機正在重新啟動", "請稍候 10 秒鐘。如果畫面仍未出現，請呼叫現場工作人員協助。"),
+            "投幣無法辨識": ("🪙", "硬幣無法辨識", "請確認投入的是新台幣硬幣。如硬幣被退回，可能是因為表面髒污，請更換一枚再試。"),
+        }
+
+        emoji, title, msg = demo_messages[demo_error]
+        st.markdown(f"""
+        <div style="background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+                    border-radius: 15px; padding: 30px; text-align: center; color: white;
+                    max-width: 500px; margin: 0 auto;">
+            <p style="font-size: 48px; margin: 0;">{emoji}</p>
+            <h3 style="color: white; margin: 10px 0;">{title}</h3>
+            <p style="font-size: 14px; line-height: 1.8; color: #dfe6e9;">{msg}</p>
+            <hr style="border-color: rgba(255,255,255,0.2); margin: 15px 0;">
+            <p style="font-size: 12px; color: #b2bec3;">如需協助請呼叫現場工作人員</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 elif current_section == "15. 快閃店部署策略":
     st.title("🏪 快閃店部署策略")
@@ -1670,7 +2082,19 @@ elif current_section == "HW3. 課後練習":
     """)
 
     st.divider()
-    st.info("📤 請將作業帶來下堂課，我們會用你的需求描述來做截圖復刻的實戰練習。")
+    st.subheader("📤 繳交作業")
+    student3 = st.text_input("你的名字", key="hw3_name", placeholder="例：JD")
+    hw3_file = st.file_uploader(
+        "上傳需求描述文件或硬體清點表",
+        type=["png", "jpg", "jpeg", "pdf", "txt", "docx", "md", "xlsx"],
+        key="hw3_upload",
+    )
+    if hw3_file and student3:
+        path = save_uploaded_file(hw3_file, "HW3", student3)
+        st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+    elif hw3_file and not student3:
+        st.warning("請先填寫你的名字再上傳。")
+    st.caption("我們會用你的需求描述來做截圖復刻的實戰練習。")
 
 # =====================================================
 # 第四堂課：截圖復刻與在地化
@@ -2101,6 +2525,20 @@ elif current_section == "HW4. 課後練習":
     """)
 
     st.divider()
+    st.subheader("📤 繳交作業")
+    student4 = st.text_input("你的名字", key="hw4_name", placeholder="例：JD")
+    hw4_file = st.file_uploader(
+        "上傳復刻後的畫面截圖",
+        type=["png", "jpg", "jpeg", "pdf"],
+        key="hw4_upload",
+    )
+    if hw4_file and student4:
+        path = save_uploaded_file(hw4_file, "HW4", student4)
+        st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+    elif hw4_file and not student4:
+        st.warning("請先填寫你的名字再上傳。")
+
+    st.divider()
     st.subheader("📋 下堂課準備")
     st.info("""
     下堂課主題是**支付串接與部署策略**，請準備：
@@ -2484,7 +2922,19 @@ elif current_section == "HW5. 課後練習":
     """)
 
     st.divider()
-    st.info("📤 請帶來下堂課，我們會用這些資訊進行整合架構設計。")
+    st.subheader("📤 繳交作業")
+    student5 = st.text_input("你的名字", key="hw5_name", placeholder="例：JD")
+    hw5_file = st.file_uploader(
+        "上傳硬體規格文件或設備照片",
+        type=["png", "jpg", "jpeg", "pdf", "txt", "docx", "xlsx", "zip"],
+        key="hw5_upload",
+    )
+    if hw5_file and student5:
+        path = save_uploaded_file(hw5_file, "HW5", student5)
+        st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+    elif hw5_file and not student5:
+        st.warning("請先填寫你的名字再上傳。")
+    st.caption("我們會用這些資訊進行整合架構設計。")
 
 # =====================================================
 # 第六堂課：硬體整合與總結
@@ -2566,6 +3016,154 @@ elif current_section == "17. 硬體 SDK 規格收集":
 
     st.divider()
     st.info("💡 沒有文件也沒關係。如果硬體上有型號標籤，拍照上傳即可，Claude 可以協助搜尋對應的技術文件。")
+
+elif current_section == "17.5. AI 加值應用實驗":
+    st.title("✨ AI 加值應用實驗")
+
+    st.markdown("""
+    硬體串接完成後，接下來思考如何用 AI 為 PhotoBooth 創造**差異化價值**。
+    這些功能不需要額外硬體，只需要軟體升級，就能讓拍貼體驗大幅提升。
+    """)
+
+    tab_beauty, tab_frame, tab_doc = st.tabs([
+        "🪄 AI 自動美顏", "🖼️ 智慧相框生成", "📖 自動化文檔生成"
+    ])
+
+    with tab_beauty:
+        st.markdown("### AI 自動美顏：讓每張照片都好看")
+
+        st.markdown("""
+        傳統拍貼機的美顏是「一刀切」——同一個濾鏡套所有人。
+        AI 美顏可以根據每張臉的特徵**個別調整**，效果更自然。
+        """)
+
+        st.markdown("#### 可實現的美顏功能")
+        beauty_features = [
+            ("膚色均勻", "自動偵測膚色不均區域，輕微修正", "OpenCV + MediaPipe"),
+            ("亮度補償", "根據臉部位置自動調整局部亮度", "PIL / OpenCV"),
+            ("背景虛化", "人像清晰、背景自然模糊", "rembg + PIL"),
+            ("自動裁切", "偵測人臉位置，確保構圖居中", "MediaPipe Face Detection"),
+        ]
+
+        for feat, desc, tech in beauty_features:
+            col_f, col_d, col_t = st.columns([2, 5, 3])
+            with col_f:
+                st.markdown(f"**{feat}**")
+            with col_d:
+                st.markdown(desc)
+            with col_t:
+                st.caption(tech)
+
+        st.divider()
+        st.markdown("**建議 Prompt：**")
+        st.code("""【背景】
+我的 PhotoBooth 拍完照後，希望自動對照片做美顏處理。
+目前使用 Python + PIL 處理影像。
+
+【目標】
+請幫我寫一個 beauty.py 模組：
+1. 偵測照片中的人臉位置（用 MediaPipe）
+2. 對膚色區域做輕微平滑處理（保持自然）
+3. 自動調整亮度和對比度
+4. 提供「自然」「精緻」「標準」三個等級選擇
+5. 處理時間需在 2 秒內完成（拍貼機不能讓客人等太久）
+
+【風格】
+繁體中文註解，函式名稱用英文。""", language=None)
+
+    with tab_frame:
+        st.markdown("### 智慧相框生成：繁體中文主題相框")
+
+        st.markdown("""
+        讓 AI 根據活動主題，**自動生成符合情境的相框設計**。
+        不再需要每次都請設計師重新做，AI 幾秒鐘就能產出。
+        """)
+
+        st.markdown("#### 相框生成情境範例")
+
+        frame_examples = [
+            {
+                "event": "🌸 文博會",
+                "prompt": "台灣文博會主題相框，融入台灣意象（天燈、101、珍奶），繁體中文標題『文博會紀念 2026』",
+                "style": "文藝風、水彩質感",
+            },
+            {
+                "event": "🎄 聖誕快閃",
+                "prompt": "聖誕節主題相框，紅綠配色、雪花裝飾，底部寫『聖誕快樂 Merry Christmas』",
+                "style": "可愛風、金色點綴",
+            },
+            {
+                "event": "🏢 企業活動",
+                "prompt": "企業年會相框，簡約專業風格，右下角放公司 Logo 位置，頂部寫『2026 年度盛會』",
+                "style": "商務風、深藍色系",
+            },
+        ]
+
+        for ex in frame_examples:
+            with st.expander(f"{ex['event']}", expanded=False):
+                st.markdown(f"**AI Prompt：**「{ex['prompt']}」")
+                st.markdown(f"**風格：** {ex['style']}")
+
+        st.divider()
+        st.info("""
+        💡 **實作方式：**
+        - **簡單版：** 用 PIL 程式化生成邊框 + 文字（本地處理，速度快）
+        - **進階版：** 串接 AI 圖片生成 API（如 DALL-E、Stable Diffusion），產出更精美的設計
+        - **混合版：** AI 生成底圖 → PIL 加上文字和 Logo（兼顧品質與速度）
+        """)
+
+    with tab_doc:
+        st.markdown("### 自動化文檔生成：讓 AI 幫你寫維護手冊")
+
+        st.markdown("""
+        系統開發完成後，最痛苦的事情就是**寫文件**。
+        但有了 AI，你只需要提供系統資訊，它就能自動產出完整的維護手冊。
+        """)
+
+        st.markdown("#### AI 可以自動產出的文件")
+
+        doc_types = [
+            ("📘 操作手冊", "給現場操作人員看的", "每個畫面的截圖 + 操作步驟說明"),
+            ("📗 維護手冊", "給技術維護人員看的", "硬體連接圖、故障排除 SOP、零件更換步驟"),
+            ("📙 部署指南", "給 IT 人員看的", "安裝步驟、環境設定、網路需求、備份還原"),
+            ("📕 API 文件", "給未來開發者看的", "每個模組的功能說明、參數列表、使用範例"),
+        ]
+
+        for icon_name, audience, content in doc_types:
+            col_doc, col_aud, col_con = st.columns([2, 3, 5])
+            with col_doc:
+                st.markdown(f"**{icon_name}**")
+            with col_aud:
+                st.caption(audience)
+            with col_con:
+                st.markdown(content)
+
+        st.divider()
+        st.markdown("**建議 Prompt：**")
+        st.code("""【背景】
+我完成了一個 PhotoBooth 拍貼機系統，使用以下技術：
+- 前端：Streamlit
+- 硬體控制：Python（OpenCV 相機、pyserial 投幣機、CUPS 印表機）
+- 支付：LINE Pay API + QR Code
+
+【目標】
+請根據這個系統架構，產出一份「現場操作手冊」：
+1. 系統開機流程（按什麼順序啟動）
+2. 每個畫面的操作說明（搭配截圖位置標記）
+3. 常見問題排除（印表機卡紙、網路斷線等）
+4. 每日結束營業的關機流程
+5. 緊急狀況處理（斷電、設備故障）
+
+【風格】
+繁體中文、適合非技術人員閱讀、步驟編號清楚、
+重要警告用紅色標記、每個步驟一句話不超過 20 字。""", language=None)
+
+        st.divider()
+        st.success("""
+        💡 **文件不是寫完就好——它需要跟著系統更新。**
+        每次改版後，把新的程式碼交給 AI，請它比對差異並更新文件。
+        這樣維護手冊永遠是最新版本。
+        """)
 
 elif current_section == "18. 通訊協定解析":
     st.title("🔌 通訊協定解析")
@@ -2896,8 +3494,1195 @@ elif current_section == "HW6. 課後練習":
     """)
 
     st.divider()
+    st.subheader("📤 繳交成果")
+    student6 = st.text_input("你的名字", key="hw6_name", placeholder="例：JD")
+    hw6_file = st.file_uploader(
+        "上傳硬體串接測試結果或問題清單",
+        type=["png", "jpg", "jpeg", "pdf", "txt", "docx", "md", "py", "zip"],
+        key="hw6_upload",
+    )
+    if hw6_file and student6:
+        path = save_uploaded_file(hw6_file, "HW6", student6)
+        st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+    elif hw6_file and not student6:
+        st.warning("請先填寫你的名字再上傳。")
+
+    st.divider()
     st.success("""
     💡 **持續使用 AI 的秘訣：**
     每次遇到問題，先用「背景 + 目標 + 風格」描述給 AI，讓它幫你分析和寫程式。
     你負責決策，AI 負責執行——這就是 Vibe Coding 的精髓。
     """)
+
+# =====================================================
+# 第七堂課：部署與 MVP 驗收
+# =====================================================
+
+elif current_section == "R6. 上堂回顧與 Q&A":
+    st.title("🔄 上堂回顧：硬體整合")
+
+    st.subheader("📋 第六堂成果確認")
+    st.markdown("""
+    | 項目 | 狀態 |
+    |------|------|
+    | 硬體 SDK 規格收集 | ✅ / ⬜ |
+    | 通訊協定理解 | ✅ / ⬜ |
+    | 整合架構設計 | ✅ / ⬜ |
+    | 至少一個模組串接測試 | ✅ / ⬜ |
+    """)
+
+    hw_status = {}
+    for item in ["硬體 SDK 規格收集", "通訊協定理解", "整合架構設計", "至少一個模組串接測試"]:
+        hw_status[item] = st.checkbox(f"{item}", key=f"r6_{item}")
+
+    completed = sum(hw_status.values())
+    st.progress(completed / len(hw_status))
+    if completed == len(hw_status):
+        st.success("🎉 太棒了！全部完成，準備進入部署階段！")
+    else:
+        st.info(f"完成 {completed}/{len(hw_status)} 項。還沒完成的項目可以在本堂課結束前補齊。")
+
+    st.divider()
+    st.subheader("❓ 硬體串接遇到的問題")
+    st.text_area("記錄問題，今天一起討論", key="r6_issues", height=100,
+                 placeholder="例：投幣機的 Serial Port 讀不到訊號...")
+
+elif current_section == "22. MVP 版本定義與範圍":
+    st.title("🎯 MVP 版本定義與範圍")
+
+    st.markdown("""
+    **MVP（Minimum Viable Product）= 最小可行性產品**
+
+    不是做「最少的功能」，而是做出「能讓客人完成一次完整體驗」的最小版本。
+    """)
+
+    st.divider()
+    st.subheader("🔍 什麼算是 PhotoBooth 的 MVP？")
+
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #0984e3 0%, #6c5ce7 100%);
+                border-radius: 15px; padding: 25px; color: white;">
+        <h4 style="color: white; text-align: center;">MVP 核心流程</h4>
+        <p style="text-align: center; font-size: 18px; letter-spacing: 2px;">
+            💰 付款 → 📷 拍照 → 🖼️ 選背景 → 🖨️ 列印 → ✅ 完成
+        </p>
+        <hr style="border-color: rgba(255,255,255,0.3);">
+        <p style="text-align: center; font-size: 13px; color: #dfe6e9;">
+            客人從頭到尾不需要工作人員協助，就能完成整個流程
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("")
+    st.subheader("📋 MVP 功能清單")
+
+    mvp_features = {
+        "✅ MVP 必須有": [
+            "投幣/掃碼付款（至少支援一種）",
+            "倒數計時自動拍照",
+            "至少 3 款背景可選",
+            "照片合成與排版",
+            "自動列印",
+            "繁體中文介面",
+            "基本異常提示（卡紙、斷線）",
+        ],
+        "⏳ 第二版再做": [
+            "AI 自動美顏",
+            "會員系統與回購優惠",
+            "多種列印版型選擇（超過 3 種）",
+            "數據儀表板",
+            "遠端監控",
+        ],
+        "🔮 未來規劃": [
+            "AI 主題相框自動生成",
+            "社群分享功能",
+            "周邊商品購買",
+            "多機台管理系統",
+        ],
+    }
+
+    for category, items in mvp_features.items():
+        with st.expander(category, expanded=category.startswith("✅")):
+            for item in items:
+                st.markdown(f"- {item}")
+
+    st.divider()
+    st.subheader("📐 驗收標準")
+    st.markdown("""
+    MVP 通過驗收的條件：
+
+    | # | 驗收項目 | 測試方法 |
+    |---|----------|---------|
+    | 1 | 投幣後 3 秒內進入拍照畫面 | 實機計時 |
+    | 2 | 拍照倒數準確（3、2、1） | 實機觀察 |
+    | 3 | 照片合成不超過 5 秒 | 實機計時 |
+    | 4 | 列印品質清晰可接受 | 肉眼檢查 |
+    | 5 | 全流程無需人工介入 | 請非團隊成員實測 |
+    | 6 | 異常時顯示中文提示，不會當機 | 模擬斷網/卡紙 |
+    | 7 | 連續運作 2 小時無異常 | 壓力測試 |
+    """)
+
+elif current_section == "23. 部署工作流程":
+    st.title("🚀 部署工作流程")
+
+    st.markdown("從開發機到快閃店現場，需要一套可重複執行的部署 SOP。")
+
+    st.divider()
+    st.subheader("📦 部署三階段")
+
+    stages = [
+        {
+            "icon": "🏠", "title": "Stage 1：開發環境",
+            "desc": "在自己的電腦上開發和測試",
+            "tasks": ["程式碼開發", "模擬硬體測試", "功能驗證"],
+        },
+        {
+            "icon": "🧪", "title": "Stage 2：測試環境",
+            "desc": "在實際硬體上做整合測試",
+            "tasks": ["連接真實硬體", "全流程測試", "壓力測試（連續運作）"],
+        },
+        {
+            "icon": "🏪", "title": "Stage 3：正式環境",
+            "desc": "快閃店現場部署",
+            "tasks": ["搬運與架設", "網路設定", "最終確認", "開始營業"],
+        },
+    ]
+
+    cols = st.columns(3)
+    for i, s in enumerate(stages):
+        with cols[i]:
+            st.markdown(f"""
+            <div style="background: rgba(45,52,54,0.5); border-radius: 12px; padding: 20px;
+                        min-height: 250px; border-top: 4px solid {'#e74c3c' if i == 0 else '#f39c12' if i == 1 else '#27ae60'};">
+                <h3 style="text-align: center;">{s['icon']}</h3>
+                <h4>{s['title']}</h4>
+                <p style="font-size: 13px; color: #b2bec3;">{s['desc']}</p>
+                <hr style="border-color: rgba(255,255,255,0.1);">
+                {''.join(f'<p style="font-size: 13px;">☑️ {t}</p>' for t in s['tasks'])}
+            </div>
+            """, unsafe_allow_html=True)
+
+    st.divider()
+    st.subheader("📝 部署 SOP 檢查表")
+
+    deploy_checklist = [
+        ("出發前", ["確認程式碼為最新版本", "備份到 USB 隨身碟", "準備備用相紙和墨水", "確認所有線材齊全"]),
+        ("到場後", ["架設硬體（螢幕、相機、印表機、投幣機）", "連接所有線路", "確認網路連線", "啟動系統並做一次完整測試"]),
+        ("營業中", ["每 2 小時檢查相紙存量", "注意印表機溫度", "監控網路連線狀態", "記錄任何異常狀況"]),
+        ("收攤後", ["關閉系統（先軟體、再硬體）", "備份當天照片", "記錄營業數據", "整理線材、安全包裝硬體"]),
+    ]
+
+    for phase, items in deploy_checklist:
+        with st.expander(f"📋 {phase}", expanded=False):
+            for item in items:
+                st.checkbox(item, key=f"deploy_{phase}_{item[:8]}")
+
+elif current_section == "24. 現場部署實作":
+    st.title("🔧 現場部署實作")
+
+    st.markdown("模擬一次完整的部署流程，確認你能獨立完成。")
+
+    st.divider()
+    st.subheader("🎬 部署模擬演練")
+
+    st.markdown("依序完成以下步驟，每完成一步就打勾：")
+
+    deploy_steps = [
+        "1. 開啟終端機，確認 Python 環境正常",
+        "2. 進入專案目錄，執行 `streamlit run app.py`",
+        "3. 確認 Streamlit 畫面正常顯示",
+        "4. 測試投幣/掃碼流程",
+        "5. 測試拍照功能",
+        "6. 測試照片合成與列印",
+        "7. 模擬異常情境（拔網路線、關印表機）",
+        "8. 確認異常提示正確顯示",
+        "9. 恢復正常後系統能自動復原",
+        "10. 連續運作 30 分鐘無異常",
+    ]
+
+    completed_steps = 0
+    for step in deploy_steps:
+        if st.checkbox(step, key=f"sim_{step[:10]}"):
+            completed_steps += 1
+
+    st.progress(completed_steps / len(deploy_steps))
+    if completed_steps == len(deploy_steps):
+        st.balloons()
+        st.success("🎉 部署模擬演練完成！你已經具備獨立部署的能力。")
+
+    st.divider()
+    st.subheader("📸 部署紀錄")
+    st.markdown("拍下你的部署現場，作為日後參考：")
+    deploy_photo = st.file_uploader("上傳部署現場照片", type=["png", "jpg", "jpeg"], key="deploy_photo")
+    if deploy_photo:
+        st.image(deploy_photo, caption="部署現場紀錄", use_container_width=True)
+
+elif current_section == "HW7. 課後練習":
+    st.title("📝 課後練習：完成一次完整部署")
+
+    st.markdown("在下堂課前，請完成以下任務。")
+
+    st.divider()
+    st.subheader("🎯 練習任務")
+    st.markdown("""
+    1. **在測試環境完成一次完整部署**（從啟動到收攤）
+    2. **記錄部署過程中遇到的問題**，整理成問題清單
+    3. **計時整個部署流程**，找出可以加速的環節
+    4. **拍攝部署過程照片**，作為 SOP 文件的素材
+    """)
+
+    st.divider()
+    st.subheader("📤 繳交作業")
+    student7 = st.text_input("你的名字", key="hw7_name", placeholder="例：JD")
+    hw7_file = st.file_uploader(
+        "上傳部署紀錄或問題清單",
+        type=["png", "jpg", "jpeg", "pdf", "txt", "docx", "md"],
+        key="hw7_upload",
+    )
+    if hw7_file and student7:
+        path = save_uploaded_file(hw7_file, "HW7", student7)
+        st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+    elif hw7_file and not student7:
+        st.warning("請先填寫你的名字再上傳。")
+
+# =====================================================
+# 第八堂課：GitHub 版本控制與協作
+# =====================================================
+
+elif current_section == "R7. 上堂回顧與 Q&A":
+    st.title("🔄 上堂回顧：部署與 MVP")
+
+    st.subheader("📋 第七堂成果確認")
+
+    r7_items = ["MVP 功能清單確認", "部署 SOP 制定", "至少一次完整部署測試", "部署問題記錄與解決"]
+    for item in r7_items:
+        st.checkbox(item, key=f"r7_{item}")
+
+    st.divider()
+    st.subheader("❓ 部署遇到的問題")
+    st.text_area("分享你的部署經驗", key="r7_issues", height=100,
+                 placeholder="例：現場 Wi-Fi 太慢，支付驗證經常逾時...")
+
+elif current_section == "25. Git 版本控制入門":
+    st.title("📚 Git 版本控制入門")
+
+    st.markdown("""
+    寫程式最怕的事情：**改壞了卻回不去。**
+    Git 就像是程式碼的「時光機」，讓你隨時可以回到任何一個版本。
+    """)
+
+    st.divider()
+    tab_why_git, tab_concepts, tab_commands = st.tabs(["🤔 為什麼需要 Git", "📖 核心概念", "⌨️ 基本指令"])
+
+    with tab_why_git:
+        st.markdown("### 沒有版本控制的噩夢")
+
+        st.markdown("""
+        <div style="background: #2d3436; border: 2px solid #d63031; border-radius: 10px;
+                    padding: 20px; color: #ff7675; font-family: monospace; font-size: 13px;">
+            📂 PhotoBooth/<br>
+            ├── app.py<br>
+            ├── app_backup.py<br>
+            ├── app_backup_0401.py<br>
+            ├── app_v2.py<br>
+            ├── app_v2_final.py<br>
+            ├── app_v2_final_真的最終版.py<br>
+            └── app_v2_final_真的最終版_JD修改.py<br>
+            <br>
+            😱 到底哪個才是最新的？
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("")
+        st.markdown("""
+        <div style="background: #2d3436; border: 2px solid #00b894; border-radius: 10px;
+                    padding: 20px; color: #55efc4; font-family: monospace; font-size: 13px;">
+            📂 PhotoBooth/<br>
+            └── app.py &nbsp; ← 永遠只有一個檔案<br>
+            <br>
+            📜 Git 歷史紀錄：<br>
+            &nbsp;&nbsp;#7 — 修正印表機逾時問題 (4/8)<br>
+            &nbsp;&nbsp;#6 — 新增 QR Code 支付 (4/5)<br>
+            &nbsp;&nbsp;#5 — 完成背景選擇功能 (4/3)<br>
+            &nbsp;&nbsp;#4 — 在地化繁體中文 (4/1)<br>
+            &nbsp;&nbsp;...<br>
+            <br>
+            ✅ 清清楚楚，隨時可以回到任何版本
+        </div>
+        """, unsafe_allow_html=True)
+
+    with tab_concepts:
+        st.markdown("### Git 的三個核心概念")
+
+        concepts = [
+            ("📸 Commit（提交）", "把目前的程式碼「拍照存檔」。每次存檔都要寫一段說明。",
+             "就像遊戲的存檔點，隨時可以讀取。"),
+            ("🌿 Branch（分支）", "開一條「平行宇宙」來做實驗，不影響主線。",
+             "想試新功能？開一條分支，成功了再合併回來。"),
+            ("☁️ Remote（遠端）", "把程式碼存到雲端（GitHub），多人協作 + 備份。",
+             "電腦壞了也不怕，程式碼在雲端安全保管。"),
+        ]
+
+        for title, desc, analogy in concepts:
+            st.markdown(f"#### {title}")
+            st.markdown(desc)
+            st.caption(f"💡 比喻：{analogy}")
+            st.markdown("")
+
+    with tab_commands:
+        st.markdown("### 日常會用到的 Git 指令")
+        st.markdown("你不需要記住所有指令，只要會這幾個就夠了：")
+
+        commands = [
+            ("git status", "查看目前有哪些檔案被修改了", "查看狀態"),
+            ("git add .", "把所有修改的檔案加入「準備提交」的清單", "加入清單"),
+            ("git commit -m \"說明\"", "提交（存檔），附上這次改了什麼", "存檔"),
+            ("git push", "把本機的提交上傳到 GitHub", "上傳"),
+            ("git pull", "把 GitHub 上的最新版本下載到本機", "下載"),
+            ("git log --oneline", "查看提交歷史紀錄", "查看歷史"),
+        ]
+
+        for cmd, desc, short in commands:
+            col_cmd, col_desc = st.columns([4, 6])
+            with col_cmd:
+                st.code(cmd, language="bash")
+            with col_desc:
+                st.markdown(f"**{short}** — {desc}")
+
+        st.info("💡 **用 AI 幫你記：** 忘記指令沒關係，直接問 Claude「我想把程式碼上傳到 GitHub，要打什麼指令？」")
+
+elif current_section == "26. GitHub 協作流程":
+    st.title("🤝 GitHub 協作流程")
+
+    st.markdown("把專案放到 GitHub 之後，你就有了**備份、版本紀錄、團隊協作**三大好處。")
+
+    st.divider()
+    st.subheader("🚀 第一次上傳專案到 GitHub")
+
+    st.markdown("**Step by Step：**")
+
+    steps = [
+        ("1. 建立 GitHub 帳號", "到 github.com 註冊（免費）"),
+        ("2. 建立新的 Repository", "點 New Repository → 命名為 `photobooth` → 選 Private（私人）"),
+        ("3. 在本機初始化 Git", "`git init` → `git add .` → `git commit -m \"初始版本\"`"),
+        ("4. 連結到 GitHub", "`git remote add origin https://github.com/你的帳號/photobooth.git`"),
+        ("5. 上傳", "`git push -u origin main`"),
+    ]
+
+    for title, desc in steps:
+        st.markdown(f"**{title}**")
+        st.markdown(f"　{desc}")
+
+    st.divider()
+    st.subheader("🔄 日常工作流程")
+
+    st.markdown("""
+    ```
+    1. 開始工作前 → git pull（取得最新版本）
+    2. 寫程式、修改功能
+    3. 完成後 → git add . → git commit -m "說明"
+    4. 上傳 → git push
+    5. 回到步驟 1
+    ```
+    """)
+
+    st.info("""
+    💡 **建議 Prompt：**
+    「我剛修改了 app.py 的投幣偵測邏輯，請幫我寫一個適當的 git commit 訊息。」
+    AI 會根據你的程式碼變更，自動產出清楚的提交說明。
+    """)
+
+elif current_section == "27. 用 AI 管理程式碼變更":
+    st.title("🤖 用 AI 管理程式碼變更")
+
+    st.markdown("讓 AI 幫你做版本控制中最煩人的事：**寫提交說明、比較差異、解決衝突。**")
+
+    st.divider()
+
+    tab_commit, tab_diff, tab_conflict = st.tabs(["📝 自動寫 Commit Message", "🔍 程式碼差異比較", "⚔️ 解決合併衝突"])
+
+    with tab_commit:
+        st.markdown("### 讓 AI 幫你寫 Commit Message")
+        st.markdown("好的提交說明 = **做了什麼 + 為什麼做**")
+
+        st.markdown("**不好的例子：**")
+        st.code("git commit -m \"update\"", language="bash")
+        st.code("git commit -m \"fix bug\"", language="bash")
+
+        st.markdown("**好的例子：**")
+        st.code("git commit -m \"修正投幣機在連續投幣時金額計算錯誤的問題\"", language="bash")
+        st.code("git commit -m \"新增 QR Code 掃碼支付功能（LINE Pay Sandbox）\"", language="bash")
+
+        st.markdown("")
+        st.markdown("**建議 Prompt：**")
+        st.code("""我剛修改了以下檔案，請幫我寫一個 git commit message：
+- app.py: 修改了投幣偵測的邏輯，改用中斷而非輪詢
+- hardware/coin.py: 新增 interrupt_handler() 函式
+- config.yaml: 新增投幣機的中斷設定
+
+要求：繁體中文、一行標題 + 詳細說明""", language=None)
+
+    with tab_diff:
+        st.markdown("### 用 AI 看懂程式碼差異")
+        st.markdown("當你不確定改了什麼，可以請 AI 幫你分析：")
+
+        st.code("""請幫我分析以下 git diff 的內容，用繁體中文說明：
+1. 改了什麼
+2. 為什麼可能要這樣改
+3. 有沒有潛在的風險""", language=None)
+
+        st.info("💡 Claude Code 內建 `/diff` 指令，可以直接分析當前的程式碼變更。")
+
+    with tab_conflict:
+        st.markdown("### 合併衝突不用怕")
+        st.markdown("當兩個人改了同一個地方，Git 會標記衝突。這時候請 AI 幫你：")
+
+        st.code("""以下是一個 git merge 衝突，請幫我解決：
+- 我的版本：改了投幣金額判斷為 >= 50
+- 對方的版本：改了投幣金額判斷為 >= 30
+- 正確做法應該是什麼？請幫我合併並解釋原因""", language=None)
+
+elif current_section == "HW8. 課後練習":
+    st.title("📝 課後練習：把專案上傳到 GitHub")
+
+    st.markdown("今天學了 Git 和 GitHub，現在輪到你實際操作。")
+
+    st.divider()
+    st.subheader("🎯 練習任務")
+    st.markdown("""
+    1. **建立 GitHub 帳號**（如果還沒有的話）
+    2. **建立一個新的 Repository**（命名為 `photobooth`，設為 Private）
+    3. **把目前的專案上傳到 GitHub**
+    4. **做一個小修改**（例如改歡迎畫面的文字），然後 commit + push
+    5. **到 GitHub 網頁確認**你的程式碼和提交記錄都在上面
+
+    **進階挑戰：** 請 Claude 幫你寫 `.gitignore` 和 `README.md`
+    """)
+
+    st.divider()
+    st.subheader("📤 繳交作業")
+    student8 = st.text_input("你的名字", key="hw8_name", placeholder="例：JD")
+    hw8_file = st.file_uploader(
+        "上傳 GitHub 頁面截圖（顯示你的 repo 和 commit 記錄）",
+        type=["png", "jpg", "jpeg", "pdf"],
+        key="hw8_upload",
+    )
+    if hw8_file and student8:
+        path = save_uploaded_file(hw8_file, "HW8", student8)
+        st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+    elif hw8_file and not student8:
+        st.warning("請先填寫你的名字再上傳。")
+
+# =====================================================
+# 第九堂課：測試迭代與品質優化
+# =====================================================
+
+elif current_section == "R8. 上堂回顧與 Q&A":
+    st.title("🔄 上堂回顧：GitHub 版本控制")
+
+    st.subheader("📋 第八堂成果確認")
+    for item in ["GitHub 帳號建立", "Repository 建立", "專案已上傳", "完成至少一次 commit + push"]:
+        st.checkbox(item, key=f"r8_{item}")
+
+    st.divider()
+    st.subheader("❓ 版控遇到的問題")
+    st.text_area("分享你的版控經驗", key="r8_issues", height=100,
+                 placeholder="例：push 的時候一直要我輸入密碼...")
+
+elif current_section == "28. 系統測試策略":
+    st.title("🧪 系統測試策略")
+
+    st.markdown("""
+    MVP 做出來了，但「能動」不代表「能用」。
+    進入第三個月，我們的核心任務是：**找出所有問題，逐一修好。**
+    """)
+
+    st.divider()
+    st.subheader("🔬 三層測試法")
+
+    test_layers = [
+        {
+            "name": "🔧 單元測試", "color": "#e74c3c",
+            "what": "測試每個小模組能不能獨立運作",
+            "examples": ["相機模組：能不能成功拍一張照片？", "印表機模組：能不能送出列印指令？", "投幣模組：能不能正確偵測金額？"],
+        },
+        {
+            "name": "🔗 整合測試", "color": "#f39c12",
+            "what": "測試模組之間串在一起能不能正常運作",
+            "examples": ["投幣完 → 能不能正確觸發拍照？", "拍照完 → 能不能正確送去合成？", "合成完 → 能不能正確列印？"],
+        },
+        {
+            "name": "👤 使用者測試", "color": "#27ae60",
+            "what": "請真實使用者操作，觀察他們遇到什麼問題",
+            "examples": ["客人看得懂操作介面嗎？", "流程順不順暢？有沒有卡住的地方？", "拿到照片的表情如何？"],
+        },
+    ]
+
+    for layer in test_layers:
+        st.markdown(f"""
+        <div style="border-left: 4px solid {layer['color']}; padding: 15px 20px; margin-bottom: 15px;
+                    background: rgba(45,52,54,0.3); border-radius: 0 8px 8px 0;">
+            <strong style="color: {layer['color']}; font-size: 16px;">{layer['name']}</strong>
+            <p style="color: #dfe6e9; margin: 5px 0;">{layer['what']}</p>
+        </div>
+        """, unsafe_allow_html=True)
+        for ex in layer["examples"]:
+            st.markdown(f"　　- {ex}")
+
+    st.divider()
+    st.subheader("📋 測試紀錄表")
+    st.markdown("每次測試都要記錄結果，方便追蹤問題。")
+
+    st.markdown("""
+    | 測試項目 | 預期結果 | 實際結果 | 通過？ | 備註 |
+    |---------|---------|---------|--------|------|
+    | 投幣 50 元 | 進入拍照畫面 | | | |
+    | 拍照倒數 | 3-2-1 拍照 | | | |
+    | 背景選擇 | 顯示 3 款可選 | | | |
+    | 照片合成 | 5 秒內完成 | | | |
+    | 自動列印 | 照片清晰 | | | |
+    | 拔網路線 | 顯示中文提示 | | | |
+    """)
+
+elif current_section == "29. 迭代修正工作坊":
+    st.title("🔄 迭代修正工作坊")
+
+    st.markdown("""
+    發現問題後，用 Vibe Coding 的方式快速修正。
+    **流程：發現問題 → 描述給 AI → 審核方案 → 修正 → 重新測試**
+    """)
+
+    st.divider()
+    st.subheader("📝 問題追蹤板")
+    st.markdown("把測試中發現的問題記錄在這裡，逐一解決：")
+
+    if "issues" not in st.session_state:
+        st.session_state.issues = []
+
+    col_input, col_priority = st.columns([6, 4])
+    with col_input:
+        new_issue = st.text_input("新問題描述", key="new_issue", placeholder="例：拍照時燈光太暗")
+    with col_priority:
+        priority = st.selectbox("優先度", ["🔴 高（影響核心流程）", "🟡 中（影響體驗）", "🟢 低（可之後處理）"], key="issue_priority")
+
+    if st.button("➕ 新增問題") and new_issue:
+        st.session_state.issues.append({"desc": new_issue, "priority": priority, "status": "待處理"})
+
+    if st.session_state.issues:
+        st.markdown("---")
+        for i, issue in enumerate(st.session_state.issues):
+            col_p, col_d, col_s = st.columns([2, 5, 3])
+            with col_p:
+                st.markdown(issue["priority"][:2])
+            with col_d:
+                st.markdown(issue["desc"])
+            with col_s:
+                new_status = st.selectbox(
+                    f"狀態 #{i+1}", ["待處理", "處理中", "已解決"],
+                    key=f"issue_status_{i}",
+                    index=["待處理", "處理中", "已解決"].index(issue["status"]),
+                )
+                st.session_state.issues[i]["status"] = new_status
+
+    st.divider()
+    st.subheader("💡 用 AI 快速修正的技巧")
+    st.markdown("""
+    **描述問題的範本：**
+    ```
+    【問題】拍照時螢幕上的倒數計時會閃爍
+    【重現步驟】投幣 → 選背景 → 進入拍照 → 倒數時螢幕閃爍
+    【環境】Windows 10 + Chrome + Streamlit 1.30
+    【期望】倒數數字平穩顯示，不閃爍
+    ```
+
+    把這段貼給 Claude，它會幫你分析原因並提出修正方案。
+    """)
+
+elif current_section == "HW9. 課後練習":
+    st.title("📝 課後練習：完成一輪完整測試")
+
+    st.markdown("本週的任務是把 MVP 做一次完整的測試，找出所有問題。")
+
+    st.divider()
+    st.subheader("🎯 練習任務")
+    st.markdown("""
+    1. **對照測試紀錄表**，逐項測試每個功能
+    2. **記錄所有發現的問題**，標記優先度
+    3. **至少修正一個問題**，用 Git commit 記錄修正內容
+    4. **請一個非團隊成員**操作一次完整流程，記錄他們的反應
+    """)
+
+    st.divider()
+    st.subheader("📤 繳交作業")
+    student9 = st.text_input("你的名字", key="hw9_name", placeholder="例：JD")
+    hw9_file = st.file_uploader(
+        "上傳測試紀錄或問題清單",
+        type=["png", "jpg", "jpeg", "pdf", "txt", "docx", "md", "xlsx"],
+        key="hw9_upload",
+    )
+    if hw9_file and student9:
+        path = save_uploaded_file(hw9_file, "HW9", student9)
+        st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+    elif hw9_file and not student9:
+        st.warning("請先填寫你的名字再上傳。")
+
+# =====================================================
+# 第十堂課：會員系統與社群經營
+# =====================================================
+
+elif current_section == "R9. 上堂回顧與 Q&A":
+    st.title("🔄 上堂回顧：測試迭代")
+
+    st.subheader("📋 第九堂成果確認")
+    for item in ["完成完整測試一輪", "問題清單已建立", "至少修正一個問題", "使用者測試完成"]:
+        st.checkbox(item, key=f"r9_{item}")
+
+    st.divider()
+    st.subheader("📊 目前 Bug 狀態")
+    col_open, col_fixed = st.columns(2)
+    with col_open:
+        open_bugs = st.number_input("待修問題數", min_value=0, value=0, key="open_bugs")
+    with col_fixed:
+        fixed_bugs = st.number_input("已修問題數", min_value=0, value=0, key="fixed_bugs")
+
+    if open_bugs + fixed_bugs > 0:
+        st.progress(fixed_bugs / (open_bugs + fixed_bugs))
+        st.caption(f"修復率：{fixed_bugs}/{open_bugs + fixed_bugs}")
+
+elif current_section == "30. 會員關係建立與維護":
+    st.title("👥 會員關係建立與維護")
+
+    st.markdown("""
+    拍貼機不只是「一次性消費」。透過會員系統，你可以：
+    - **認識你的客人** — 知道誰是回頭客、什麼時段最多人
+    - **創造回購動機** — 集點、優惠券、會員專屬背景
+    - **建立長期關係** — 推播活動訊息、生日優惠
+    """)
+
+    st.divider()
+    tab_system, tab_flow, tab_retention = st.tabs(["🏗️ 會員系統架構", "📱 註冊流程設計", "🔄 回購機制"])
+
+    with tab_system:
+        st.markdown("### 會員系統最小架構")
+
+        st.markdown("""
+        ```
+        📱 客人掃 QR Code
+            ↓
+        🌐 LINE 官方帳號加好友
+            ↓
+        📋 自動建立會員資料
+            ↓
+        💰 消費紀錄自動累積
+            ↓
+        🎁 達標自動發送獎勵
+        ```
+        """)
+
+        st.info("""
+        💡 **為什麼用 LINE 而不是自己做 App？**
+        - 台灣人幾乎都有 LINE，不用額外下載
+        - LINE 官方帳號免費額度就夠小型營運使用
+        - 推播訊息直接送到客人手機
+        """)
+
+    with tab_flow:
+        st.markdown("### 會員註冊流程（無痛版）")
+        st.markdown("客人不需要填任何表單，只要掃碼加好友就完成：")
+
+        flow_steps = [
+            ("📷 拍照完成後", "螢幕顯示 QR Code：「掃碼加好友，免費領取電子版照片」"),
+            ("📱 客人掃碼", "自動加入 LINE 官方帳號"),
+            ("🤖 自動回覆", "歡迎訊息 + 發送電子版照片連結"),
+            ("📊 後台記錄", "自動建立會員：LINE 暱稱、首次消費日期、消費金額"),
+        ]
+
+        for step, desc in flow_steps:
+            st.markdown(f"**{step}**")
+            st.markdown(f"　{desc}")
+
+        st.warning("⚠️ **隱私注意：** 不要收集不必要的個資。LINE 暱稱 + 消費記錄就夠用了。")
+
+    with tab_retention:
+        st.markdown("### 回購機制設計")
+
+        retention_ideas = [
+            ("🎫 集點卡", "每次消費累積 1 點，滿 5 點免費拍一次", "簡單有效，客人有明確目標"),
+            ("🎂 生日優惠", "生日月份享半價（需加入 LINE 官方帳號）", "增加加好友的誘因"),
+            ("🖼️ 會員專屬背景", "每月推出會員限定背景/相框", "創造持續回來的理由"),
+            ("👫 揪團優惠", "兩人同行第二位半價", "客人自帶新客人"),
+        ]
+
+        for icon_name, desc, why in retention_ideas:
+            with st.expander(icon_name):
+                st.markdown(f"**做法：** {desc}")
+                st.markdown(f"**效果：** {why}")
+
+elif current_section == "31. 官方帳號與社群經營":
+    st.title("📣 官方帳號與社群經營")
+
+    st.markdown("拍貼機的商業價值不只在機台上，**社群是延伸戰場**。")
+
+    st.divider()
+    tab_internal, tab_merchandise = st.tabs(["🏢 內部社群經營", "🛍️ 周邊商品功能"])
+
+    with tab_internal:
+        st.markdown("### 經營 LINE 官方帳號")
+
+        st.markdown("#### 📅 內容行事曆建議")
+        calendar = [
+            ("每週", "分享客人拍照趣事（需徵得同意）、最新背景預覽"),
+            ("每月", "會員專屬優惠、新品/新場地預告"),
+            ("活動前", "快閃店地點＆日期公告、限定背景預覽"),
+            ("活動後", "活動照片精選、感謝訊息、下次活動預告"),
+        ]
+
+        for freq, content in calendar:
+            col_f, col_c = st.columns([2, 8])
+            with col_f:
+                st.markdown(f"**{freq}**")
+            with col_c:
+                st.markdown(content)
+
+        st.divider()
+        st.markdown("#### 🤖 自動化訊息（用 AI 生成）")
+        st.code("""【背景】
+我經營一個 PhotoBooth 拍貼機的 LINE 官方帳號。
+
+【目標】
+請幫我生成以下自動回覆訊息（繁體中文、語氣活潑親切）：
+1. 新好友歡迎訊息
+2. 消費後感謝訊息（附電子照片領取連結）
+3. 集點滿 5 點的通知訊息
+4. 一個月沒消費的喚回訊息
+5. 生日祝福訊息""", language=None)
+
+    with tab_merchandise:
+        st.markdown("### 周邊商品功能規劃")
+        st.markdown("把拍貼照片延伸成實體商品，創造額外營收。")
+
+        products = [
+            ("🧲 客製磁鐵", "把拍貼照片印成冰箱磁鐵", "成本低、製作快、客人愛收藏"),
+            ("🔑 鑰匙圈", "壓克力鑰匙圈 + 拍貼照片", "適合快閃店現場販售"),
+            ("📱 手機殼", "客製化手機殼（需搭配外部廠商）", "單價高、利潤好"),
+            ("📮 明信片", "把拍貼照片印成明信片，現場可寄出", "適合觀光景點"),
+            ("🎁 貼紙組", "一組 6 張迷你貼紙", "成本最低、適合年輕客群"),
+        ]
+
+        for icon_name, desc, note in products:
+            col_p, col_d, col_n = st.columns([2, 5, 3])
+            with col_p:
+                st.markdown(f"**{icon_name}**")
+            with col_d:
+                st.markdown(desc)
+            with col_n:
+                st.caption(note)
+
+        st.divider()
+        st.info("""
+        💡 **MVP 思維用在周邊商品：**
+        先從「貼紙組」開始（成本最低、製作最快），驗證客人有購買意願後，
+        再逐步加入其他商品。不要一次全做。
+        """)
+
+elif current_section == "HW10. 課後練習":
+    st.title("📝 課後練習：設計你的會員方案")
+
+    st.markdown("根據今天的課程，設計一份適合你的會員與社群經營方案。")
+
+    st.divider()
+    st.subheader("🎯 練習任務")
+    st.markdown("""
+    1. **決定會員系統的建立方式**（LINE 官方帳號 / 其他）
+    2. **設計一個回購機制**（集點？生日優惠？會員專屬？）
+    3. **規劃第一個月的社群內容**（至少 4 則貼文主題）
+    4. **選一款周邊商品**做為試賣品項
+
+    可以請 AI 幫你發想和細化方案。
+    """)
+
+    st.divider()
+    st.subheader("📤 繳交作業")
+    student10 = st.text_input("你的名字", key="hw10_name", placeholder="例：JD")
+    hw10_file = st.file_uploader(
+        "上傳會員方案或社群經營規劃",
+        type=["png", "jpg", "jpeg", "pdf", "txt", "docx", "md"],
+        key="hw10_upload",
+    )
+    if hw10_file and student10:
+        path = save_uploaded_file(hw10_file, "HW10", student10)
+        st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+    elif hw10_file and not student10:
+        st.warning("請先填寫你的名字再上傳。")
+
+# =====================================================
+# 第十一堂課：維護自動化與周邊商品
+# =====================================================
+
+elif current_section == "R10. 上堂回顧與 Q&A":
+    st.title("🔄 上堂回顧：會員與社群")
+
+    st.subheader("📋 第十堂成果確認")
+    for item in ["會員系統方案確定", "回購機制設計完成", "社群內容規劃", "周邊商品品項選定"]:
+        st.checkbox(item, key=f"r10_{item}")
+
+    st.divider()
+    st.text_area("分享你的會員方案構想", key="r10_share", height=100)
+
+elif current_section == "32. 維護流程自動化":
+    st.title("⚙️ 維護流程自動化")
+
+    st.markdown("""
+    機台在外面跑，你不可能 24 小時盯著看。
+    **自動化維護 = 讓機台自己告訴你它需要什麼。**
+    """)
+
+    st.divider()
+    tab_monitor, tab_alert, tab_sop = st.tabs(["📊 自動監控", "🔔 異常告警", "📋 維護 SOP 自動化"])
+
+    with tab_monitor:
+        st.markdown("### 機台健康監控儀表板")
+        st.markdown("讓 AI 幫你建一個簡單的監控頁面，即時掌握每台機台的狀態。")
+
+        monitor_items = [
+            ("🖨️ 相紙存量", "剩餘張數 / 低於 20 張時告警"),
+            ("🌡️ 機台溫度", "CPU / 印表機溫度 / 超過 60°C 告警"),
+            ("📶 網路狀態", "連線/斷線 / 延遲超過 500ms 告警"),
+            ("💾 硬碟空間", "剩餘容量 / 低於 1GB 告警"),
+            ("📷 相機狀態", "正常/離線 / 連拍失敗率"),
+            ("💰 營收統計", "今日拍照次數 / 營收金額"),
+        ]
+
+        cols = st.columns(3)
+        for i, (name, desc) in enumerate(monitor_items):
+            with cols[i % 3]:
+                st.markdown(f"""
+                <div style="background: rgba(45,52,54,0.5); border-radius: 10px; padding: 15px;
+                            margin-bottom: 10px; min-height: 100px;">
+                    <p style="font-size: 16px; margin: 0;">{name}</p>
+                    <p style="font-size: 12px; color: #b2bec3; margin: 5px 0 0 0;">{desc}</p>
+                </div>
+                """, unsafe_allow_html=True)
+
+    with tab_alert:
+        st.markdown("### 異常告警通知設定")
+        st.markdown("當機台出問題時，自動發通知到你的手機。")
+
+        alert_channels = [
+            ("LINE Notify", "免費、設定簡單、即時推播到 LINE", "推薦 ⭐"),
+            ("Email", "適合記錄，但即時性差", "備用"),
+            ("LINE 官方帳號", "可以順便通知客人機台狀態", "進階"),
+        ]
+
+        for channel, desc, tag in alert_channels:
+            st.markdown(f"**{channel}** — {desc}　`{tag}`")
+
+        st.divider()
+        st.markdown("**建議 Prompt：**")
+        st.code("""【背景】
+我的 PhotoBooth 系統需要在異常時自動發送通知到我的 LINE。
+
+【目標】
+請幫我用 LINE Notify 實作告警通知：
+1. 當相紙剩餘低於 20 張時通知
+2. 當網路斷線超過 30 秒時通知
+3. 當印表機報錯時通知（附錯誤代碼）
+4. 每日營業結束時發送當日統計摘要
+
+【風格】
+通知訊息用繁體中文，簡短明瞭。""", language=None)
+
+    with tab_sop:
+        st.markdown("### 定期維護 SOP")
+
+        st.markdown("#### 📅 日常維護（每日營業前）")
+        daily = ["檢查相紙存量", "確認印表機墨水/色帶", "測試網路連線", "執行一次完整測試拍照", "清潔觸控螢幕和鏡頭"]
+        for item in daily:
+            st.markdown(f"- {item}")
+
+        st.markdown("#### 📅 週維護")
+        weekly = ["清理硬碟暫存照片", "檢查系統更新", "備份資料到外部硬碟", "檢查所有線材是否鬆脫"]
+        for item in weekly:
+            st.markdown(f"- {item}")
+
+        st.markdown("#### 📅 月維護")
+        monthly = ["深度清潔所有硬體", "更換耗材（色帶/相紙補充）", "匯出月報資料", "檢討異常紀錄、優化系統"]
+        for item in monthly:
+            st.markdown(f"- {item}")
+
+elif current_section == "33. 周邊商品功能規劃":
+    st.title("🛍️ 周邊商品功能規劃")
+
+    st.markdown("把「拍照留念」延伸成「帶走商品」，創造更多營收。")
+
+    st.divider()
+    st.subheader("📐 商品功能的系統設計")
+
+    st.markdown("""
+    在拍貼機的流程中加入商品選購環節：
+
+    ```
+    📷 拍照完成
+        ↓
+    🖼️ 預覽照片
+        ↓
+    ┌─────────────────────────────┐
+    │  🖨️ 列印照片（基本方案）      │ ← 原有流程
+    │  🧲 加購磁鐵 (+$50)          │ ← 新增
+    │  🔑 加購鑰匙圈 (+$80)        │ ← 新增
+    │  🎁 加購貼紙組 (+$30)        │ ← 新增
+    └─────────────────────────────┘
+        ↓
+    💰 顯示總金額 → 付款
+        ↓
+    🎉 製作 & 取貨
+    ```
+    """)
+
+    st.divider()
+    st.subheader("💰 商品定價參考")
+
+    pricing = [
+        ("拍貼照片（基本）", "$50-80", "$5-10", "85%+"),
+        ("迷你貼紙組 x6", "$30-50", "$5-8", "80%+"),
+        ("客製磁鐵", "$50-80", "$15-20", "70%+"),
+        ("壓克力鑰匙圈", "$80-120", "$20-30", "70%+"),
+        ("明信片", "$30-50", "$5-10", "80%+"),
+    ]
+
+    st.markdown("| 商品 | 建議售價 | 估計成本 | 毛利率 |")
+    st.markdown("|------|---------|---------|--------|")
+    for name, price, cost, margin in pricing:
+        st.markdown(f"| {name} | {price} | {cost} | {margin} |")
+
+    st.divider()
+    st.info("""
+    💡 **實作優先順序：**
+    1. 先做「貼紙組」— 只需要調整列印排版，不需額外設備
+    2. 再做「磁鐵」— 需要磁鐵片 + 護貝機，成本可控
+    3. 最後做「鑰匙圈」— 需要壓克力切割機或外包
+    """)
+
+elif current_section == "HW11. 課後練習":
+    st.title("📝 課後練習：建立你的維護計畫")
+
+    st.markdown("設計一份完整的維護計畫和周邊商品試做。")
+
+    st.divider()
+    st.subheader("🎯 練習任務")
+    st.markdown("""
+    1. **設定 LINE Notify 告警**（或選擇其他通知方式）
+    2. **制定日/週/月維護 SOP**，列印貼在機台旁
+    3. **選一款周邊商品試做**，計算實際成本
+    4. **設計加購流程的 UI 草稿**（可以用紙筆畫，拍照上傳）
+    """)
+
+    st.divider()
+    st.subheader("📤 繳交作業")
+    student11 = st.text_input("你的名字", key="hw11_name", placeholder="例：JD")
+    hw11_file = st.file_uploader(
+        "上傳維護計畫、商品試做照片、或 UI 草稿",
+        type=["png", "jpg", "jpeg", "pdf", "txt", "docx", "md"],
+        key="hw11_upload",
+    )
+    if hw11_file and student11:
+        path = save_uploaded_file(hw11_file, "HW11", student11)
+        st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+    elif hw11_file and not student11:
+        st.warning("請先填寫你的名字再上傳。")
+
+# =====================================================
+# 第十二堂課：成果發表與未來路線圖
+# =====================================================
+
+elif current_section == "R11. 上堂回顧與 Q&A":
+    st.title("🔄 上堂回顧：維護與商品")
+
+    st.subheader("📋 第十一堂成果確認")
+    for item in ["告警通知設定完成", "維護 SOP 制定", "周邊商品試做", "加購流程 UI 草稿"]:
+        st.checkbox(item, key=f"r11_{item}")
+
+    st.divider()
+    st.text_area("分享你的維護或商品試做經驗", key="r11_share", height=100)
+
+elif current_section == "34. 成果發表準備":
+    st.title("🎓 成果發表準備")
+
+    st.markdown("十二堂課走到這裡，是時候整理成果，做一次正式的成果發表。")
+
+    st.divider()
+    st.subheader("🗺️ 我們走了多遠？")
+
+    milestones_12 = [
+        {"month": "第一個月", "title": "基礎建設", "items": ["Vibe Coding 入門", "環境部署", "UI 復刻與在地化", "支付串接"]},
+        {"month": "第二個月", "title": "硬體整合", "items": ["硬體 SDK 串接", "部署 SOP", "GitHub 版控", "MVP 驗收"]},
+        {"month": "第三個月", "title": "優化與擴展", "items": ["測試迭代", "會員系統", "維護自動化", "周邊商品"]},
+    ]
+
+    cols = st.columns(3)
+    for i, m in enumerate(milestones_12):
+        with cols[i]:
+            color = ["#e74c3c", "#f39c12", "#27ae60"][i]
+            items_html = "".join(f"<p style='font-size:13px; margin:3px 0;'>✅ {item}</p>" for item in m["items"])
+            st.markdown(f"""
+            <div style="background: linear-gradient(135deg, {color}33 0%, {color}11 100%);
+                        border-radius: 12px; padding: 20px; border-top: 4px solid {color};
+                        min-height: 220px;">
+                <h4 style="color: {color};">{m['month']}</h4>
+                <p><strong>{m['title']}</strong></p>
+                {items_html}
+            </div>
+            """, unsafe_allow_html=True)
+
+    st.divider()
+    st.subheader("📊 專案完成度總覽")
+
+    phases_12 = {
+        "UI 介面復刻": 90,
+        "文字在地化": 90,
+        "支付串接": 70,
+        "印表機串接": 60,
+        "相機串接": 60,
+        "投幣機串接": 50,
+        "部署 SOP": 80,
+        "會員系統": 40,
+        "維護自動化": 30,
+        "周邊商品": 20,
+    }
+
+    for phase, pct in phases_12.items():
+        col_label, col_bar = st.columns([3, 7])
+        with col_label:
+            st.markdown(f"**{phase}**")
+        with col_bar:
+            st.progress(pct / 100)
+            st.caption(f"{pct}%")
+
+    st.divider()
+    st.subheader("📝 成果發表大綱")
+    st.markdown("""
+    準備一份 10 分鐘的成果發表，包含：
+
+    | 段落 | 時間 | 內容 |
+    |------|------|------|
+    | 開場 | 1 分鐘 | 專案背景與目標 |
+    | 技術歷程 | 3 分鐘 | 從零開始到 MVP 的過程 |
+    | 現場 Demo | 3 分鐘 | 實機演示完整流程 |
+    | 數據成果 | 1 分鐘 | 測試數據、效率提升 |
+    | 未來規劃 | 2 分鐘 | 下一步要做什麼 |
+    """)
+
+elif current_section == "35. 未來路線圖":
+    st.title("🔮 未來路線圖")
+
+    st.markdown("課程結束不是終點，而是自主營運的起點。")
+
+    st.divider()
+    st.subheader("📅 課程後 3 個月行動計畫")
+
+    roadmap = [
+        {
+            "period": "第 1 個月（穩定期）",
+            "color": "#3498db",
+            "goals": [
+                "完成所有硬體模組串接",
+                "實際快閃店部署至少 2 次",
+                "收集使用者回饋、修正問題",
+                "建立穩定的維護 SOP",
+            ],
+        },
+        {
+            "period": "第 2 個月（成長期）",
+            "color": "#e67e22",
+            "goals": [
+                "上線會員系統（LINE 官方帳號）",
+                "推出第一款周邊商品（貼紙組）",
+                "建立數據儀表板，追蹤營運指標",
+                "開始經營社群內容",
+            ],
+        },
+        {
+            "period": "第 3 個月（擴展期）",
+            "color": "#27ae60",
+            "goals": [
+                "導入 AI 美顏功能",
+                "擴展周邊商品品項",
+                "考慮第二台機台部署",
+                "整理技術文件，培訓團隊成員",
+            ],
+        },
+    ]
+
+    for r in roadmap:
+        st.markdown(f"""
+        <div style="border-left: 4px solid {r['color']}; padding: 15px 20px; margin-bottom: 15px;
+                    background: rgba(45,52,54,0.3); border-radius: 0 8px 8px 0;">
+            <strong style="color: {r['color']}; font-size: 16px;">{r['period']}</strong>
+        </div>
+        """, unsafe_allow_html=True)
+        for goal in r["goals"]:
+            st.markdown(f"　　- {goal}")
+
+    st.divider()
+    st.subheader("💡 持續使用 AI 的方向")
+
+    ai_applications = [
+        ("🧑‍💻 程式開發", "功能新增、Bug 修復、程式碼重構"),
+        ("📊 數據分析", "營收分析、客群分析、定價優化"),
+        ("📝 內容生成", "社群貼文、行銷文案、活動企劃"),
+        ("🎨 設計產出", "相框設計、宣傳海報、商品視覺"),
+        ("📖 文件撰寫", "操作手冊、維護指南、提案簡報"),
+    ]
+
+    for icon_name, examples in ai_applications:
+        col_ai, col_ex = st.columns([3, 7])
+        with col_ai:
+            st.markdown(f"**{icon_name}**")
+        with col_ex:
+            st.markdown(examples)
+
+    st.divider()
+    st.markdown("")
+    st.success("""
+    🎉 **恭喜完成十二堂課程！**
+
+    你已經從「什麼是 Vibe Coding」走到「獨立營運一台智慧拍貼機」。
+
+    記住我們的開發哲學：
+    **穩定、小規模、快速產出可驗收的成果。**
+
+    有任何問題隨時找 Jeff，Claude Code 也隨時待命！🚀
+    """)
+
+elif current_section == "HW12. 課後練習":
+    st.title("📝 最終作業：成果整理與發表")
+
+    st.markdown("最後一堂課了。整理你的成果，準備正式發表。")
+
+    st.divider()
+    st.subheader("🎯 練習任務")
+    st.markdown("""
+    1. **準備成果發表簡報**（10 分鐘內）
+    2. **確認實機 Demo 可正常運作**
+    3. **整理專案的 GitHub README**，讓其他人看得懂
+    4. **寫下你的學習心得和未來計畫**
+    """)
+
+    st.divider()
+    st.subheader("💬 學習心得")
+    st.text_area("十二堂課下來，你最大的收穫是什麼？未來想繼續學什麼？",
+                 key="final_feedback_12", height=150)
+
+    st.divider()
+    st.subheader("📤 繳交作業")
+    student12 = st.text_input("你的名字", key="hw12_name", placeholder="例：JD")
+    hw12_file = st.file_uploader(
+        "上傳成果簡報或學習心得",
+        type=["png", "jpg", "jpeg", "pdf", "txt", "docx", "md", "pptx"],
+        key="hw12_upload",
+    )
+    if hw12_file and student12:
+        path = save_uploaded_file(hw12_file, "HW12", student12)
+        st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+    elif hw12_file and not student12:
+        st.warning("請先填寫你的名字再上傳。")
