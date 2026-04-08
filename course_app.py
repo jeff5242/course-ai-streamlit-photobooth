@@ -4,10 +4,12 @@ import io
 import os
 from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from gdrive_upload import upload_to_gdrive
 
 
 def save_uploaded_file(uploaded_file, hw_name, student_name=""):
-    """將上傳的作業檔案存入 uploads/homework/ 資料夾"""
+    """將上傳的作業檔案存入本機 + 上傳到 Google Drive"""
+    # 本機存檔（備份）
     save_dir = os.path.join(os.path.dirname(__file__), "uploads", "homework", hw_name)
     os.makedirs(save_dir, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -16,7 +18,11 @@ def save_uploaded_file(uploaded_file, hw_name, student_name=""):
     filepath = os.path.join(save_dir, filename)
     with open(filepath, "wb") as f:
         f.write(uploaded_file.getbuffer())
-    return filepath
+
+    # 上傳到 Google Drive
+    gdrive_link = upload_to_gdrive(uploaded_file, hw_name, filename)
+
+    return filepath, gdrive_link
 
 # 設定頁面配置
 st.set_page_config(layout="wide", page_title="AI 領航員：Vibe Coding 實戰教學")
@@ -674,8 +680,10 @@ elif current_section == "HW1. 課後練習":
         key="hw1_upload",
     )
     if hw1_file and student:
-        path = save_uploaded_file(hw1_file, "HW1", student)
+        path, gdrive_link = save_uploaded_file(hw1_file, "HW1", student)
         st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+        if gdrive_link:
+            st.info(f"☁️ 已同步到 Google Drive")
     elif hw1_file and not student:
         st.warning("請先填寫你的名字再上傳。")
 
@@ -1528,8 +1536,10 @@ elif current_section == "HW2. 課後練習":
         key="hw2_upload",
     )
     if hw2_file and student2:
-        path = save_uploaded_file(hw2_file, "HW2", student2)
+        path, gdrive_link = save_uploaded_file(hw2_file, "HW2", student2)
         st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+        if gdrive_link:
+            st.info(f"☁️ 已同步到 Google Drive")
     elif hw2_file and not student2:
         st.warning("請先填寫你的名字再上傳。")
 
@@ -2090,8 +2100,10 @@ elif current_section == "HW3. 課後練習":
         key="hw3_upload",
     )
     if hw3_file and student3:
-        path = save_uploaded_file(hw3_file, "HW3", student3)
+        path, gdrive_link = save_uploaded_file(hw3_file, "HW3", student3)
         st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+        if gdrive_link:
+            st.info(f"☁️ 已同步到 Google Drive")
     elif hw3_file and not student3:
         st.warning("請先填寫你的名字再上傳。")
     st.caption("我們會用你的需求描述來做截圖復刻的實戰練習。")
@@ -2533,8 +2545,10 @@ elif current_section == "HW4. 課後練習":
         key="hw4_upload",
     )
     if hw4_file and student4:
-        path = save_uploaded_file(hw4_file, "HW4", student4)
+        path, gdrive_link = save_uploaded_file(hw4_file, "HW4", student4)
         st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+        if gdrive_link:
+            st.info(f"☁️ 已同步到 Google Drive")
     elif hw4_file and not student4:
         st.warning("請先填寫你的名字再上傳。")
 
@@ -2863,33 +2877,7 @@ elif current_section == "9. 設備選型決策討論":
     st.divider()
     st.subheader("🗺️ 系統架構總覽")
     st.markdown("把以上分析整合起來，整台拍貼機的系統架構如下：")
-
-    st.code("""
-┌─────────────────────────────────────────────────┐
-│                   控制主機                        │
-│  (Raspberry Pi 5 / Intel NUC)                   │
-│  OS: Linux    Runtime: Python                    │
-│                                                  │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐       │
-│  │ 拍貼軟體  │  │ 支付監聽  │  │ 印表機驅動│       │
-│  │(Streamlit)│  │(紙鈔機)  │  │(CUPS/USB)│       │
-│  └────┬─────┘  └────┬─────┘  └─────┬────┘       │
-│       │              │              │             │
-│  ─────┴──────────────┴──────────────┴─────       │
-│                      │                            │
-│  I/O 介面            │                            │
-│  ┌───────┬───────┬───┴───┬─────────┬───────┐    │
-│  │HDMI×2 │USB×3  │Serial │  USB    │ GPIO  │    │
-│  │螢幕輸出│觸控/鼠 │紙鈔機  │ 印表機  │(Pi用) │    │
-│  └───┬───┘└───┬──┘└───┬──┘└───┬────┘└──┬───┘    │
-└──────┼────────┼───────┼───────┼────────┼────────┘
-       │        │       │       │        │
-  ┌────┴───┐┌───┴──┐┌───┴──┐┌──┴───┐┌───┴────┐
-  │螢幕×2  ││觸控  ││紙鈔  ││印表機││紙鈔訊號│
-  │(操作+  ││+ 滑鼠││接收器││(熱昇 ││(GPIO  │
-  │ 預覽)  ││      ││      ││ 華)  ││ 備用) │
-  └────────┘└──────┘└──────┘└──────┘└───────┘
-    """, language=None)
+    st.image("images/photobooth-infra.png", caption="PhotoBooth 系統架構總覽", use_container_width=True)
 
     st.divider()
     st.subheader("💬 討論：你們的場景")
@@ -2930,8 +2918,10 @@ elif current_section == "HW5. 課後練習":
         key="hw5_upload",
     )
     if hw5_file and student5:
-        path = save_uploaded_file(hw5_file, "HW5", student5)
+        path, gdrive_link = save_uploaded_file(hw5_file, "HW5", student5)
         st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+        if gdrive_link:
+            st.info(f"☁️ 已同步到 Google Drive")
     elif hw5_file and not student5:
         st.warning("請先填寫你的名字再上傳。")
     st.caption("我們會用這些資訊進行整合架構設計。")
@@ -3502,8 +3492,10 @@ elif current_section == "HW6. 課後練習":
         key="hw6_upload",
     )
     if hw6_file and student6:
-        path = save_uploaded_file(hw6_file, "HW6", student6)
+        path, gdrive_link = save_uploaded_file(hw6_file, "HW6", student6)
         st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+        if gdrive_link:
+            st.info(f"☁️ 已同步到 Google Drive")
     elif hw6_file and not student6:
         st.warning("請先填寫你的名字再上傳。")
 
@@ -3740,8 +3732,10 @@ elif current_section == "HW7. 課後練習":
         key="hw7_upload",
     )
     if hw7_file and student7:
-        path = save_uploaded_file(hw7_file, "HW7", student7)
+        path, gdrive_link = save_uploaded_file(hw7_file, "HW7", student7)
         st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+        if gdrive_link:
+            st.info(f"☁️ 已同步到 Google Drive")
     elif hw7_file and not student7:
         st.warning("請先填寫你的名字再上傳。")
 
@@ -3968,8 +3962,10 @@ elif current_section == "HW8. 課後練習":
         key="hw8_upload",
     )
     if hw8_file and student8:
-        path = save_uploaded_file(hw8_file, "HW8", student8)
+        path, gdrive_link = save_uploaded_file(hw8_file, "HW8", student8)
         st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+        if gdrive_link:
+            st.info(f"☁️ 已同步到 Google Drive")
     elif hw8_file and not student8:
         st.warning("請先填寫你的名字再上傳。")
 
@@ -4121,8 +4117,10 @@ elif current_section == "HW9. 課後練習":
         key="hw9_upload",
     )
     if hw9_file and student9:
-        path = save_uploaded_file(hw9_file, "HW9", student9)
+        path, gdrive_link = save_uploaded_file(hw9_file, "HW9", student9)
         st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+        if gdrive_link:
+            st.info(f"☁️ 已同步到 Google Drive")
     elif hw9_file and not student9:
         st.warning("請先填寫你的名字再上傳。")
 
@@ -4310,8 +4308,10 @@ elif current_section == "HW10. 課後練習":
         key="hw10_upload",
     )
     if hw10_file and student10:
-        path = save_uploaded_file(hw10_file, "HW10", student10)
+        path, gdrive_link = save_uploaded_file(hw10_file, "HW10", student10)
         st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+        if gdrive_link:
+            st.info(f"☁️ 已同步到 Google Drive")
     elif hw10_file and not student10:
         st.warning("請先填寫你的名字再上傳。")
 
@@ -4486,8 +4486,10 @@ elif current_section == "HW11. 課後練習":
         key="hw11_upload",
     )
     if hw11_file and student11:
-        path = save_uploaded_file(hw11_file, "HW11", student11)
+        path, gdrive_link = save_uploaded_file(hw11_file, "HW11", student11)
         st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+        if gdrive_link:
+            st.info(f"☁️ 已同步到 Google Drive")
     elif hw11_file and not student11:
         st.warning("請先填寫你的名字再上傳。")
 
@@ -4682,7 +4684,9 @@ elif current_section == "HW12. 課後練習":
         key="hw12_upload",
     )
     if hw12_file and student12:
-        path = save_uploaded_file(hw12_file, "HW12", student12)
+        path, gdrive_link = save_uploaded_file(hw12_file, "HW12", student12)
         st.success(f"✅ 作業已儲存！檔案：`{os.path.basename(path)}`")
+        if gdrive_link:
+            st.info(f"☁️ 已同步到 Google Drive")
     elif hw12_file and not student12:
         st.warning("請先填寫你的名字再上傳。")
